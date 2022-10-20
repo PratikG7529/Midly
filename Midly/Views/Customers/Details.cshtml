@@ -1,0 +1,155 @@
+﻿@model IEnumerable<Midly.Models.Customer>
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<!--<p>
+    Html.ActionLink("Create New", "Create")
+</p>
+<table id="customers" class="table">
+    <thead>
+        <tr>
+            <th>
+                Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                Membership Type
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>-->
+@*@foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Name, "Edit", new { id = item.Id })
+            </td>
+            <td>
+                @item.MembershipType.Name
+            </td>
+            <td>
+                <button data-customer-id=@item.Id class="btn-link js-delete">Delete</button>
+            </td>
+        </tr>
+    }*@
+<!--</tbody>
+
+
+
+</table>-->
+<table id="customers" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                Membership Type
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+    @section scripts {
+        <script>
+
+            $(document).ready(function () {
+                //Calling the api via ajax call instead of server
+                // Step 1
+                // DataTable({creating a configuration object}
+               var table =  $("#customers").DataTable({
+                    ajax: {
+                        url: "/api/customers/",
+                        dataSrc: "" // Watch udemy mvc 78 79 session to know y its ""
+                        //as we are getting json response as an array in which it constains json {} objects
+                        //[
+                        //    {
+                        //        key: value
+                        //    },
+                        //{
+                        //    key:value
+                        //}
+                        //]
+                    },
+                    // Step 2
+                    //Specifing the columns
+                    columns: [
+                        //supplying each object
+                        {
+                            //First column
+                            data: "name",
+
+                            //First column data
+                            //Here we need a link on the customer name that will display us the details for which we need a function
+                            render: function (data, type, customer) {
+                                return "<a href='/customers/edit/" + customer.id + "'>" + customer.name + "</a>";
+                            }
+
+                        },
+                        {
+                            data: "membershipType.name"
+                        },
+                        {
+                            data: "id",
+
+                            render: function (data) {
+                                return "<button class='btn-link js-delete' data-customer-id=" + data + ">Delete</button>";
+                            }
+                        }
+                    ]
+                });
+
+                $("#customers").on("click", ".js-delete", function () {
+                    
+                    var button = $(this);
+
+                    console.log(button)
+
+                    bootbox.confirm("Are u sure u want to delete", function (result) {
+                        if (result) {
+                            
+
+                            $.ajax({
+                                url: "/api/customers/" + button.attr("data-customer-id"),
+                                method: "DELETE",
+                                success: function () {
+
+                                    table.row(button.parents("tr")).remove().draw();
+
+
+                                    /*Drawback of following line
+                                    This will just remove the tr tag but the data wont be deleted
+                                    to resolved this issue use
+                                    table.row(button.parents("tr")).remove().draw();
+                                    row(passing the reference to tr)
+                                    .remove() remove the reference
+                                    .draw() used to update the table with the new updated/deleted data
+                                    */
+                                    //button.parents("tr").remove();
+                                }
+                            });
+                        }
+                    })
+
+
+
+                });
+            });
+
+
+        </script>
+
+    }

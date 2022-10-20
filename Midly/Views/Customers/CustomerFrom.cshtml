@@ -1,0 +1,63 @@
+﻿@model Midly.ViewModels.CustomerFormViewModel
+@{
+    ViewBag.Title = "NewCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.Customer.Id >0)
+{
+    <h2>Edit Existing Customer</h2>
+}
+else
+{
+    <h2>New Customer form</h2>
+}
+
+@* Html.BeginForm only creates <form> tag but not the closing tag</form>
+    Therefore we are using the @using {} constraint
+*@
+@using (Html.BeginForm("CustomerFrom", "Customers"))
+{
+    @Html.ValidationSummary()
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Name) @*m => m is the model*@
+        @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control", @placeholder = "Enter Your Name" })
+        @Html.ValidationMessageFor(m => m.Customer.Name)
+    </div>
+
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Birthdate)
+        @*<label>Date of birth</label> Not applying label because it doesnot provide focus to the textbox below
+            Instead use labelFor*@
+        @Html.TextBoxFor(m => m.Customer.Birthdate, new { @class = "form-control", @placeholder = "Enter Your Birthdate" })
+        @Html.ValidationMessageFor(m => m.Customer.Birthdate)
+    </div>
+
+    <div class="checkbox">
+        @Html.CheckBoxFor(m => m.Customer.IsSubscribedToNewsLetter)
+        @Html.LabelFor(m => m.Customer.IsSubscribedToNewsLetter)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.MembershipTypeId)
+        @Html.DropDownListFor(m => m.Customer.MembershipTypeId, new SelectList(Model.MembershipType, "Id", "Name"), "Select membership type", new { @class = "form-control" })
+
+    </div>
+    @Html.HiddenFor(c => c.Customer.Id)
+
+    //Used to disable attackers to perform any melicious action
+    @Html.AntiForgeryToken()
+    //Above ANtiForgeryToken() can be verified by updating the token before hitting save button.
+    <button type="Submit" class="btn btn-primart">Save</button>
+
+
+
+
+
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

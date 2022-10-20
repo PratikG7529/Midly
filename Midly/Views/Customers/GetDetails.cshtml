@@ -1,0 +1,28 @@
+﻿@model Midly.Models.Customer
+
+@{
+    ViewBag.Title = "GetDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>GetDetails</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Model.Name
+        </th>
+        <th></th>
+    </tr>
+</table>
+<li>Membership Type : @Model.MembershipType.Name</li>
+@if (!String.IsNullOrEmpty(Model.Birthdate))
+            {                 
+        <li>
+            Birthdate : @Model.Birthdate
+        </li>
+}
+
